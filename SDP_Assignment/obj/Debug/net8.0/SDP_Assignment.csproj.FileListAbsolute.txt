@@ -1,0 +1,14 @@
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.AssemblyInfoInputs.cache
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.AssemblyInfo.cs
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.csproj.CoreCompileInputs.cache
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\bin\Debug\net8.0\SDP_Assignment.exe
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\bin\Debug\net8.0\SDP_Assignment.deps.json
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\bin\Debug\net8.0\SDP_Assignment.runtimeconfig.json
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\bin\Debug\net8.0\SDP_Assignment.dll
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\bin\Debug\net8.0\SDP_Assignment.pdb
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.dll
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\refint\SDP_Assignment.dll
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.pdb
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\SDP_Assignment.genruntimeconfig.cache
+C:\Users\Charlotte\Documents\SDP\SDP_Assignment\SDP_Assignment\obj\Debug\net8.0\ref\SDP_Assignment.dll
