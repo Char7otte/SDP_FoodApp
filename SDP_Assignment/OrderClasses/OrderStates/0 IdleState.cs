@@ -13,7 +13,9 @@ class IdleState : OrderState
     public void createOrder()
     {
         Console.WriteLine("Order created.");
+        Console.WriteLine();
         order.setState(order.OrderCreatedState);
+        
     }
 
     public void confirmOrder()

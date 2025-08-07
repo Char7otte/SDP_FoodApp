@@ -22,11 +22,6 @@ namespace SDP_Assignment.OrderClasses.OrderStates
         order.setState(order.AwaitingPaymentState);
     }
 
-    public bool canConfirmOrder()
-    {
-        return true; 
-    }
-
     public void processPayment()
     {
         Console.WriteLine("Cannot process payment - order must be confirmed first.");

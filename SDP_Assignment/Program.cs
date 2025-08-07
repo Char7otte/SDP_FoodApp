@@ -56,7 +56,6 @@ void afterLoggedIn()
 
         switch (input)
         {
-            
             case "1":
                 browseRestaurants();
                 break;
@@ -80,16 +79,7 @@ void browseRestaurants()
     switch (input)
     {
         case "1":
-            waitress.printMenu();
-            if (ifWantToOrder()) currentOrder = createOrder();
-
-            if (currentOrder == null || currentOrder.ToString() == "") break;
-            Console.WriteLine($"The order state is: {currentOrder.getState()}");
-            currentOrder = confirmOrder();
-
-            if (currentOrder == null || currentOrder.ToString() == "") break;
-            Console.WriteLine($"The order state is: {currentOrder.getState()}");
-            currentOrder = payment();
+            startOrder();
             break;
         case "2":
             break;
@@ -114,6 +104,36 @@ bool ifWantToOrder()
             invalidInput();
             return false;
     }
+}
+
+void startOrder()
+{
+    waitress.printMenu();
+    if (ifWantToOrder()) 
+    {
+        currentOrder = createOrder();
+    }
+    else 
+    {
+        return;
+    }
+
+    Console.WriteLine($"The order state is: {currentOrder.getState()}"); 
+
+    currentOrder = confirmOrder();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    currentOrder = payment();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    currentOrder = notifyRestaurant();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    currentOrder = startPreparing();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    Console.WriteLine("END OF CURRENT CODE");
+    Console.ReadLine();
 }
 
 Order createOrder()
@@ -148,10 +168,12 @@ Order createOrder()
 
 Order confirmOrder()
 {
-    Console.WriteLine("Are you sure this is your order?(Y/N)");
+    Console.WriteLine("YOUR ORDER: ");
+    currentOrder.getFood();
     Console.Write("TOTAL PRICE: $");
     Console.WriteLine(currentOrder.calculateCost());
-    currentOrder.getFood();
+    Console.WriteLine("Are you sure this is your order?(Y/N)");
+    
     var input = Console.ReadLine()?.ToUpper();
 
     if (input == "Y")
@@ -163,57 +185,86 @@ Order confirmOrder()
         Console.WriteLine("Cancelling order");
         currentOrder.cancelOrder();
     }
+    else
+    {
+        Console.WriteLine("Invalid input. Order not confirmed.");
+        confirmOrder();
+    }
 
     return currentOrder;
 }
 
 Order payment()
 {
-    Console.WriteLine("Scan the PayNow! QR code below to pay for the food:");
-    Console.WriteLine("\n┌─────────────────────────┐");
-    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    Console.WriteLine("│ ██  ██    ██    ██  ██ │");
-    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    Console.WriteLine("│         ██  ██         │");
-    Console.WriteLine("│ ██  ██    ██  ██    ██ │");
-    Console.WriteLine("│   ██  ██████  ██  ██   │");
-    Console.WriteLine("│ ██    ██  ██    ██  ██ │");
-    Console.WriteLine("│   ██████    ██████  ██ │");
-    Console.WriteLine("│ ██    ██  ██  ██    ██ │");
-    Console.WriteLine("│         ██  ██         │");
-    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    Console.WriteLine("│ ██  ██    ██    ██  ██ │");
-    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    Console.WriteLine("└─────────────────────────┘");
-    Console.ReadLine();
-    Console.WriteLine("Please hold...");
-    Console.ReadLine();
-    if (paymentSuccess())
+    while (true)
     {
+        Console.WriteLine("Scan the PayNow! QR code below to pay for the food:");
+        Console.WriteLine("\n┌─────────────────────────┐");
+        Console.WriteLine("│ ██████  ██  ██  ██████ │");
+        Console.WriteLine("│ ██  ██    ██    ██  ██ │");
+        Console.WriteLine("│ ██████  ██  ██  ██████ │");
+        Console.WriteLine("│         ██  ██         │");
+        Console.WriteLine("│ ██  ██    ██  ██    ██ │");
+        Console.WriteLine("│   ██  ██████  ██  ██   │");
+        Console.WriteLine("│ ██    ██  ██    ██  ██ │");
+        Console.WriteLine("│   ██████    ██████  ██ │");
+        Console.WriteLine("│ ██    ██  ██  ██    ██ │");
+        Console.WriteLine("│         ██  ██         │");
+        Console.WriteLine("│ ██████  ██  ██  ██████ │");
+        Console.WriteLine("│ ██  ██    ██    ██  ██ │");
+        Console.WriteLine("│ ██████  ██  ██  ██████ │");
+        Console.WriteLine("└─────────────────────────┘");
+        Console.ReadLine();
+        Console.WriteLine("Please hold...");
+        Console.ReadLine();
+
+        if (!paymentSuccess())
+        {
+            Console.WriteLine("Payment failure. Please try again.");
+            continue;
+        }
         Console.WriteLine("Payment success.");
         Console.WriteLine($"${currentOrder.calculateCost()} has been taken from your account");
         Console.ReadLine();
 
         currentOrder.processPayment();
-    }
-    else
-    {
-        Console.WriteLine("Payment failure. Please try again.");
-        currentOrder.cancelOrder();
+        break;
     }
     return currentOrder;
 }
 
 bool paymentSuccess()
 {
+    //Simulate payment. Has 10% chance to fail
     var rand = new Random();
     int randomNumber = rand.Next(1, 11);
     if (randomNumber == 1) return false;
     return true;
 }
 
+Order notifyRestaurant()
+{
+    Console.WriteLine("Notifying restaurant. Please hold...");
+    Console.ReadLine();
+    if (!paymentSuccess()) //Hijacking the RNG function to simulate the restaurant denying the order
+    {
+        Console.WriteLine("Restaurant is unable to fulfill this order. We are sorry for the inconvenience.");
+        currentOrder.rejectOrder();
+        return currentOrder; // Changed: return currentOrder instead of new()
+    }
 
+    currentOrder.acceptOrder();
+    return currentOrder;
+}
 
+Order startPreparing()
+{
+    Console.WriteLine("Restaurant is now preparing your food...");
+    Console.ReadLine();
+    currentOrder.startPreparation();
+    return currentOrder;
+}
+ 
 #pragma warning disable CS8321 // Local function is declared but never used
 //this is the dumbest warning to exist
 void notImplemented()
