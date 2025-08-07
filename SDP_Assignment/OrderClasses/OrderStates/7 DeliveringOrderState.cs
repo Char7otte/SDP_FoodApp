@@ -46,8 +46,12 @@ class DeliveringOrderState : OrderState
 
     public void delivered()
     {
-        Console.WriteLine("Order delivered successfully!");
         order.setDate();
+
+        Console.WriteLine("Order delivered successfully!");
+        Console.WriteLine($"Order details have been archived on {order.OrderCreationDate}");
+        Console.WriteLine($"It will be deleted on: {order.OrderCreationDate.AddYears(1)}");
+
         order.setState(order.OrderCompletedState);
     }
 

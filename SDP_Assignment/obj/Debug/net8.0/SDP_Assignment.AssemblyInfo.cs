@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SDP_Assignment")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+595e67258f1e253234d1b97a1ecf73fbc9397745")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+545d79c5c408e90f089c4a824ffa99b0137fadb0")]
 [assembly: System.Reflection.AssemblyProductAttribute("SDP_Assignment")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SDP_Assignment")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

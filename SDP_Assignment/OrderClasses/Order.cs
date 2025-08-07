@@ -17,8 +17,9 @@ public class Order
     public OrderState CancelledState { get; set; }
 
     private OrderState state;
-    private DateTime orderCreationDate;
     private List<MenuItem> menuItems;
+
+    public DateTime OrderCreationDate {  get; set; }
 
     public Order()
     {
@@ -33,7 +34,7 @@ public class Order
         OrderCompletedState = new OrderCompletedState(this);
         CancelledState = new CancelledState(this);
 
-        orderCreationDate = new(); //This will be set when the order is delivered
+        OrderCreationDate = new(); //This will be set when the order is delivered
         state = IdleState;
         menuItems = new();
     }
@@ -60,7 +61,7 @@ public class Order
 
     public void setDate()
     {
-        orderCreationDate = DateTime.Now;
+        OrderCreationDate = DateTime.Now;
     }
 
     public double calculateCost()
@@ -122,26 +123,5 @@ public class Order
     public void rejectOrder()
     {
         state.rejectOrder();
-    }
-
-    // Helper methods for better state management
-    public string GetCurrentStateName()
-    {
-        return state.GetType().Name;
-    }
-
-    public bool CanConfirmOrder()
-    {
-        return state is OrderCreatedState;
-    }
-
-    public bool CanCancelOrder()
-    {
-        return !(state is OrderCompletedState || state is CancelledState);
-    }
-
-    public bool CanProcessPayment()
-    {
-        return state is AwaitingPaymentState;
     }
 }

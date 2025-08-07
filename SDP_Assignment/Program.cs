@@ -132,8 +132,18 @@ void startOrder()
     currentOrder = startPreparing();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
 
+    currentOrder = finishPreparing();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    currentOrder = startDelivery();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+
+    currentOrder = finishDelivery();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
     Console.WriteLine("END OF CURRENT CODE");
     Console.ReadLine();
+
+    afterLoggedIn();
 }
 
 Order createOrder()
@@ -263,6 +273,31 @@ Order startPreparing()
     Console.ReadLine();
     currentOrder.startPreparation();
     return currentOrder;
+}
+
+Order finishPreparing()
+{
+    Console.WriteLine("Restaurant has finished making your food.");
+    Console.WriteLine("Please wait while we get ready for delivery.");
+    Console.ReadLine();
+
+    currentOrder.foodComplete();
+    return currentOrder;
+}
+
+Order startDelivery()
+{
+    Console.WriteLine("Delivery has started.");
+    Console.ReadLine();
+
+    currentOrder.deliver();
+    return currentOrder;
+}
+
+Order finishDelivery()
+{
+    currentOrder.delivered();
+    return new();
 }
  
 #pragma warning disable CS8321 // Local function is declared but never used
