@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SDP_Assignment.Iterators;
+using SDP_Assignment.IteratorClasses;
 
-namespace SDP_Assignment.Menus
+namespace SDP_Assignment.MenuClasses
 {
     internal class DinerMenu : MenuComponent
     {

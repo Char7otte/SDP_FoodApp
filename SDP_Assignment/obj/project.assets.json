@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Charlotte\\Documents\\SDP\\SDP_Assignment\\SDP_Assignment\\SDP_Assignment.csproj",
+      "projectUniqueName": "C:\\Users\\Charlotte\\Documents\\GitHub\\SDP_FoodApp\\SDP_Assignment\\SDP_Assignment.csproj",
       "projectName": "SDP_Assignment",
-      "projectPath": "C:\\Users\\Charlotte\\Documents\\SDP\\SDP_Assignment\\SDP_Assignment\\SDP_Assignment.csproj",
+      "projectPath": "C:\\Users\\Charlotte\\Documents\\GitHub\\SDP_FoodApp\\SDP_Assignment\\SDP_Assignment.csproj",
       "packagesPath": "C:\\Users\\Charlotte\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Charlotte\\Documents\\SDP\\SDP_Assignment\\SDP_Assignment\\obj\\",
+      "outputPath": "C:\\Users\\Charlotte\\Documents\\GitHub\\SDP_FoodApp\\SDP_Assignment\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

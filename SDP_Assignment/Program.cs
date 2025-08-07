@@ -1,12 +1,11 @@
 ﻿using SDP_Assignment;
-using SDP_Assignment.AccountFolder;
-using SDP_Assignment.Menus;
+using SDP_Assignment.AccountClasses;
+using SDP_Assignment.MenuClasses;
 
 // Initialize data
 Accounts accountsList = DataInitializer.InitializeAccounts();
 Console.WriteLine();
 Waitress waitress = DataInitializer.InitializeWaitress();
-Console.WriteLine();
 Account? loggedInAccount = new();
 
 startScreen();

@@ -1,11 +1,11 @@
-﻿using SDP_Assignment.Menus;
+﻿using SDP_Assignment.MenuClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDP_Assignment.Iterators
+namespace SDP_Assignment.IteratorClasses
 {
     internal class CompositeIterator: Iterator
     {

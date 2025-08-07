@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDP_Assignment.AccountFolder
+namespace SDP_Assignment.AccountClasses
 {
     internal class Account
     {

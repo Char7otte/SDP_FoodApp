@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDP_Assignment.Iterators
+namespace SDP_Assignment.IteratorClasses
 {
     internal interface Iterator
     {
