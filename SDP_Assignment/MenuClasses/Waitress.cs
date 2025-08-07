@@ -28,20 +28,20 @@ namespace SDP_Assignment.MenuClasses
             allMenus.print();
         }
 
-        public void printVegetarianMenu()
-        {
-            Iterator iter = allMenus.createIterator();
-            Console.WriteLine("VEGETARIAN MENU");
-            while (iter.hasNext())
-            {
-                MenuComponent mc = (MenuComponent)iter.next();
-                try
-                {
-                    if (mc.Vegetarian == true)
-                        mc.print();
-                }
-                catch (NotSupportedException) { }
-            }
-        }
+        //public void printVegetarianMenu()
+        //{
+        //    Iterator iter = allMenus.createIterator();
+        //    Console.WriteLine("VEGETARIAN MENU");
+        //    while (iter.hasNext())
+        //    {
+        //        MenuComponent mc = (MenuComponent)iter.next();
+        //        try
+        //        {
+        //            if (mc.Vegetarian == true)
+        //                mc.print();
+        //        }
+        //        catch (NotSupportedException) { }
+        //    }
+        //}
     }
 }

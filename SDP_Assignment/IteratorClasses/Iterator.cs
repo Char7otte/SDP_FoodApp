@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SDP_Assignment.IteratorClasses
 {
-    internal interface Iterator
+    public interface Iterator
     {
         bool hasNext();
         object next();

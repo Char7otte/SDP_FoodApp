@@ -7,7 +7,7 @@ using SDP_Assignment.IteratorClasses;
 
 namespace SDP_Assignment.MenuClasses
 {
-    internal abstract class MenuComponent
+    public abstract class MenuComponent
     {
         public virtual void add(MenuComponent mc)
         {

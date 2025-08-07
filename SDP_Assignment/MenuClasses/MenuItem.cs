@@ -8,7 +8,7 @@ using SDP_Assignment.IteratorClasses;
 
 namespace SDP_Assignment.MenuClasses
 {
-    internal class MenuItem : MenuComponent
+    public class MenuItem : MenuComponent
     {
         private string name;
         private string description;
