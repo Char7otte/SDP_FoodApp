@@ -13,11 +13,13 @@ namespace SDP_Assignment.MenuClasses
 
         public override string Name { get; }
         private Iterator? iter = null;
+        private List<int> ratings;
 
         public DinerMenu(string name)
         {
             Name = name;
             components = new();
+            ratings = new();
 
             Console.WriteLine($"{name} has been created.");
         }

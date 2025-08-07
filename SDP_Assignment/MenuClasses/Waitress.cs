@@ -11,6 +11,8 @@ namespace SDP_Assignment.MenuClasses
     {
         private MenuComponent allMenus;
 
+        public MenuComponent AllMenus { get { return allMenus; } }
+
         public Waitress(MenuComponent mc)
         {
             allMenus = mc;

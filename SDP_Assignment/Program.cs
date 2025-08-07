@@ -67,6 +67,31 @@ void afterLoggedIn()
 
 void browseRestaurants()
 {
+    Console.WriteLine("1. Browse everything");
+    Console.WriteLine("2. Browse by restaurant");
+    Console.WriteLine("3. Browse vegetarian options");
+    var input = Console.ReadLine();
+
+    switch (input)
+    {
+        case "1":
+            waitress.printMenu();
+            break;
+        case "2":
+            break;
+        case "3":
+        waitress.printVegetarianMenu();
+            break;
+        default:
+            invalidInput();
+            break;
+    }
+    
+
+
+
+
+
     waitress.printMenu();
 }
 
