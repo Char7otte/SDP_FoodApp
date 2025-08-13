@@ -33,9 +33,6 @@ void startScreen()
             case "2":
                 loggedInAccount = accountsList.login();
                 break;
-            //case "3":
-            //    browseRestaurants();
-            //    break;
             default:
                 invalidInput();
                 break;
@@ -73,26 +70,312 @@ void afterLoggedIn()
 void browseRestaurants()
 {
     Console.WriteLine();
-    Console.WriteLine("1. Browse everything");
-    Console.WriteLine("2. Browse by restaurant");
+    Console.WriteLine("=== RESTAURANT SELECTION ===");
+    
+    MenuComponent allRestaurants = waitress.AllMenus;
+    List<MenuComponent> restaurants = new List<MenuComponent>();
+    
+    var index = 0;
+    while (true) 
+    {
+        try
+        {
+            //Get child & add to index until out of range error is thrown to find length
+            MenuComponent restaurant = allRestaurants.getChild(index);
+            restaurants.Add(restaurant);
+            Console.WriteLine($"{index + 1}. {restaurant.Name}");
+            index++;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            break;
+        }
+    }
+    
+    if (restaurants.Count == 0)
+    {
+        Console.WriteLine("No restaurants available.");
+        return;
+    }
+    
+    Console.WriteLine("0. Back to main menu");
+    Console.Write("Select a restaurant: ");
+    
+    var input = Console.ReadLine();
+    
+    if (input == "0")
+    {
+        return;
+    }
+    
+    if (int.TryParse(input, out int restaurantChoice) && restaurantChoice >= 1 && restaurantChoice <= restaurants.Count)
+    { 
+        MenuComponent selectedRestaurant = restaurants[restaurantChoice - 1];
+        browseMenuCategories(selectedRestaurant);
+    }
+    else
+    {
+        invalidInput();
+        browseRestaurants();
+    }
+}
+
+void browseMenuCategories(MenuComponent restaurant)
+{
+    Console.WriteLine();
+    Console.WriteLine($"=== {restaurant.Name.ToUpper()} - MENU CATEGORIES ===");
+    
+    List<MenuComponent> categories = new List<MenuComponent>();
+    int categoryIndex = 0;
+    
+    while (true)
+    {
+        try
+        {
+            MenuComponent category = restaurant.getChild(categoryIndex);
+            categories.Add(category);
+            Console.WriteLine($"{categoryIndex + 1}. {category.Name}");
+            categoryIndex++;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            break;
+        }
+    }
+    
+    if (categories.Count == 0)
+    {
+        Console.WriteLine("No menu categories available.");
+        Console.WriteLine("0. Back to restaurant selection");
+        Console.ReadLine();
+        browseRestaurants();
+        return;
+    }
+    
+    Console.WriteLine("0. Back to restaurant selection");
+    Console.Write("Select a menu category: ");
+    
+    var input = Console.ReadLine();
+    
+    if (input == "0")
+    {
+        browseRestaurants();
+        return;
+    }
+    
+    if (int.TryParse(input, out int categoryChoice) && categoryChoice >= 1 && categoryChoice <= categories.Count)
+    {
+        MenuComponent selectedCategory = categories[categoryChoice - 1];
+        browseMenuItems(restaurant, selectedCategory);
+    }
+    else
+    {
+        invalidInput();
+        browseMenuCategories(restaurant);
+    }
+}
+
+void browseMenuItems(MenuComponent restaurant, MenuComponent category)
+{
+
+    Console.WriteLine();
+    Console.WriteLine($"=== {restaurant.Name.ToUpper()} - {category.Name.ToUpper()} ===");
+
+    List<MenuComponent> menuItems = new List<MenuComponent>();
+    collectMenuItems(category, menuItems);
+
+    if (menuItems.Count == 0)
+    {
+        Console.WriteLine("No items found in this category.");
+        Console.WriteLine("0. Back to menu categories");
+        Console.ReadLine();
+        browseMenuCategories(restaurant);
+        return;
+    }
+
+    for (int i = 0; i < menuItems.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {menuItems[i].Name} - ${menuItems[i].Price:F2}");
+        Console.WriteLine($"    {menuItems[i].Description}");
+        if (menuItems[i].Vegetarian)
+        {
+            Console.WriteLine("    (Vegetarian)");
+        }
+        Console.WriteLine();
+    }
+
+    Console.WriteLine("0. Back to menu categories");
+    Console.Write("Select an item to add to your order (or 0 to go back): ");
+
     var input = Console.ReadLine();
 
-    switch (input)
+    if (input == "0")
     {
-        case "1":
-            startOrder();
-            break;
-        case "2":
-            break;
-        default:
-            invalidInput();
-            break;
+        browseMenuCategories(restaurant);
+        return;
     }
+
+    if (int.TryParse(input, out int itemChoice) && itemChoice >= 1 && itemChoice <= menuItems.Count)
+    {
+        MenuComponent selectedItem = menuItems[itemChoice - 1];
+
+        try
+        {
+            double price = selectedItem.Price; // This will throw an error if it's not a MenuItem, meaning it's still not a leaf yet
+
+            Console.WriteLine($"Added {selectedItem.Name} to your order!");
+            MenuItem downcastedItem = selectedItem as MenuItem; //Downcasting from MenuComponent to MenuItem
+
+            currentOrder.addFood(downcastedItem);
+
+            Console.WriteLine("Would you like to add more items? (Y/N)");
+            var continueInput = Console.ReadLine()?.ToUpper();
+
+            if (continueInput == "Y")
+            {
+                browseMenuItems(restaurant, category);
+            }
+            else
+            {
+                proceedToOrder();
+            }
+        }
+        catch (NotSupportedException)
+        {
+            // This is a submenu, not an item
+            browseMenuItems(restaurant, selectedItem);
+        }
+    }
+    else
+    {
+        invalidInput();
+        browseMenuItems(restaurant, category);
+    }
+    
+}
+
+void collectMenuItems(MenuComponent menu, List<MenuComponent> items)
+{
+    int index = 0;
+    while (true)
+    {
+        try
+        {
+            MenuComponent child = menu.getChild(index);
+            
+            // Check if this is a MenuItem or another menu
+            try
+            {
+                double price = child.Price; // If this succeeds, it's a MenuItem
+                items.Add(child);
+            }
+            catch (NotSupportedException)
+            {
+                // This is a submenu, recursively collect its items
+                collectMenuItems(child, items);
+            }
+            
+            index++;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            break;
+        }
+    }
+}
+
+//void startOrderWithItem(MenuComponent selectedItem)
+//{
+//    currentOrder = new Order();
+//    MenuItem itemToAdd = new MenuItem(selectedItem.Name, selectedItem.Description, selectedItem.Vegetarian, selectedItem.Price);
+//    currentOrder.addFood(itemToAdd);
+//    currentOrder.createOrder();
+//}
+
+void proceedToOrder()
+{
+    if (!ifWantToOrder())
+    {
+        currentOrder = new Order(); // Reset the order
+        return;
+    }
+     
+
+    currentOrder.createOrder();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    var input = Console.ReadLine();
+    if (input == "0")
+    { 
+        currentOrder.cancelOrder();
+        return;
+    }
+
+    currentOrder = confirmOrder();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
+
+    currentOrder = payment();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
+
+    currentOrder = notifyRestaurant();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    if (currentOrder.getState() == "CancelledState") //Check if the restaurant rejected the order
+    {
+        return;
+    }
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
+    else 
+
+        currentOrder = startPreparing();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
+
+    currentOrder = finishPreparing();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
+
+    currentOrder = startDelivery();
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
+
+    currentOrder = finishDelivery();
+    Console.WriteLine();
+    Console.ReadLine();
+
+    afterLoggedIn();
+
 }
 
 bool ifWantToOrder() 
 {
-    Console.WriteLine("Would you like to order? (Y/N)");
+    Console.WriteLine("Would you like to proceed with your order? (Y/N)");
     var input = Console.ReadLine()?.ToUpper();
 
     switch (input) 
