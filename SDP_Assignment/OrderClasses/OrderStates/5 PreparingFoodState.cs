@@ -36,7 +36,8 @@ class PreparingFoodState : OrderState
 
     public void foodComplete()
     {
-        Console.WriteLine("Food preparation completed, preparing for delivery.");
+        Console.WriteLine("Restaurant has finished making your food.");
+        Console.WriteLine("Please wait while we get ready for delivery.");
         order.setState(order.PreparingDeliveryState);
     }
 

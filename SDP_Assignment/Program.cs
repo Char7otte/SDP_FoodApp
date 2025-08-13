@@ -2,6 +2,7 @@
 using SDP_Assignment.AccountClasses;
 using SDP_Assignment.MenuClasses;
 using SDP_Assignment.OrderClasses;
+
 // Initialize data
 Accounts accountsList = DataInitializer.InitializeAccounts();
 Console.WriteLine();
@@ -118,29 +119,72 @@ void startOrder()
         return;
     }
 
-    Console.WriteLine($"The order state is: {currentOrder.getState()}"); 
+    Console.WriteLine();
+    Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    var input = Console.ReadLine();
+    if (input == "0")
+    { 
+        currentOrder.cancelOrder();
+        return;
+    }
+
 
     currentOrder = confirmOrder();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
 
     currentOrder = payment();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
 
     currentOrder = notifyRestaurant();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    if (currentOrder.getState() == "CancelledState") //Check if the restaurant rejected the order
+    {
+        return;
+    }
+    Console.WriteLine("Enter 0 if you would like to cancel your order.");
+    input = Console.ReadLine();
+    if (input == "0")
+    {
+        currentOrder.cancelOrder();
+        return;
+    }
+    else 
 
-    currentOrder = startPreparing();
+        currentOrder = startPreparing();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
 
     currentOrder = finishPreparing();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
 
     currentOrder = startDelivery();
+    Console.WriteLine();
     Console.WriteLine($"The order state is: {currentOrder.getState()}");
+    Console.WriteLine("The order can no longer be cancelled.");
 
     currentOrder = finishDelivery();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("END OF CURRENT CODE");
+    Console.WriteLine();
     Console.ReadLine();
 
     afterLoggedIn();
@@ -152,6 +196,7 @@ Order createOrder()
 
     while (true)
     {
+        Console.WriteLine();
         Console.WriteLine("Please enter what you would like to order, one at a time.");
         Console.WriteLine("Enter 0 to finish selecting your order.");
         Console.WriteLine($"You have ordered:");
@@ -260,10 +305,10 @@ Order notifyRestaurant()
     {
         Console.WriteLine("Restaurant is unable to fulfill this order. We are sorry for the inconvenience.");
         currentOrder.rejectOrder();
-        return currentOrder; // Changed: return currentOrder instead of new()
+        return currentOrder;
     }
 
-    currentOrder.acceptOrder();
+currentOrder.acceptOrder();
     return currentOrder;
 }
 
@@ -277,8 +322,7 @@ Order startPreparing()
 
 Order finishPreparing()
 {
-    Console.WriteLine("Restaurant has finished making your food.");
-    Console.WriteLine("Please wait while we get ready for delivery.");
+    Console.WriteLine("...");
     Console.ReadLine();
 
     currentOrder.foodComplete();
