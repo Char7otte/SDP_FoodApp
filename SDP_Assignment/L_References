@@ -1,0 +1,409 @@
+using ConsoleApp1;
+using Microsoft.VisualBasic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Linq.Expressions;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+
+//make the lists dictionary. but that's annoying. also change the login to return an object, use that for all the operations
+
+Customer customer1 = new Customer("password123", "John");
+Customer customer2 = new Customer("password456", "Mary");
+Customer customer3 = new Customer("password789", "Alice");
+Customer customer4 = new Customer("password000", "Bob");
+
+// Dummy data for restaurants
+Restaurant restaurant1 = new Restaurant("resto123", "PizzaPlace");
+Restaurant restaurant2 = new Restaurant("resto456", "SushiSpot");
+Restaurant restaurant3 = new Restaurant("resto789", "BurgerKing");
+
+// Add customers to the list
+List<Customer> customers = new List<Customer> { customer1, customer2, customer3, customer4 };
+
+restaurant1.SubCustomer(customer1);
+restaurant2.SubCustomer(customer2);
+restaurant3.SubCustomer(customer3);
+// Add restaurants to the list
+List<Restaurant> restaurants = new List<Restaurant> { restaurant1, restaurant2, restaurant3 };
+
+List<Order> orders = new List<Order>();
+
+int menu(string options, int max)
+{
+    while (true)
+    {
+        Console.WriteLine(options); Console.Write("Options: ");
+        try
+        {
+            int option = Convert.ToInt32(Console.ReadLine());
+            if (option > max || option < 0)
+            {
+                Console.WriteLine("Please input valid option");
+            }
+            else
+            {
+                Console.WriteLine();
+                return option;
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
+
+bool confirm()
+{
+    while (true)
+    {
+
+        Console.Write("Confirm(Y/N): ");
+        string yn = Console.ReadLine().Trim().ToUpper();
+        if (yn == "Y")
+        {
+            return true;
+        }
+        else if (yn == "N")
+        {
+            return false;
+        }
+        else
+        {
+            Console.WriteLine("Please input Y or N");
+        }
+    }
+}
+
+void registerCustomer()
+{
+    string user;
+    while (true)
+    {
+        bool UserDup = false;
+        Console.Write("Username: ");
+        user = Console.ReadLine();
+        foreach (Customer Customer in customers)
+        {
+            if (user == Customer.Name)
+            {
+                UserDup = true;
+                break;
+            }
+        }
+        if (UserDup == true) { Console.WriteLine("Duplicate Username Found"); continue; }
+        else { break; }
+    }
+    Console.Write("Password: ");
+    string pw = Console.ReadLine();
+    if (confirm() == true)
+    {
+        Customer NewCustomer = new Customer(user, pw); customers.Add(NewCustomer);
+        Console.WriteLine("Registration Complete!\n");
+    }
+    else { Console.WriteLine("Registration Cancelled\n"); }
+}
+
+void registerRestaurant()
+{
+    string user;
+    string pw;
+    while (true)
+    {
+        bool UserDup = false;
+        Console.Write("Username: ");
+        user = Console.ReadLine();
+        foreach (Restaurant r in restaurants) 
+        {
+            if (user == r.Name)
+            {
+                UserDup = true;
+            }
+        }
+        if (UserDup == true) { Console.WriteLine("Duplicate Username Found"); continue; }
+        else { break; }
+    }
+    Console.Write("Password: ");
+    pw = Console.ReadLine();
+    if (confirm() == true)
+    {     
+        Restaurant NewRestaurant = new Restaurant(user, pw); restaurants.Add(NewRestaurant);
+        Console.WriteLine("Registration Complete!\n");
+    }
+    else { Console.WriteLine("Registration Cancelled\n"); }
+}
+
+Customer? loginCustomer()
+{
+    string user;
+    string pw;
+    Customer? c = null;
+    bool UserMatch = false;
+    Console.Write("Username: ");
+    user = Console.ReadLine();
+    foreach (Customer Customer in customers) { if  (user == Customer.Name) { UserMatch = true; c = Customer; } }
+    if (UserMatch == false) { Console.WriteLine("User not found"); return null; }
+    Console.Write("Password: ");
+    pw = Console.ReadLine();
+    if (pw == c.Password)
+    { Console.WriteLine("Logged in"); return c; }
+    else { Console.WriteLine("Wrong Password"); return null; }
+}
+
+Restaurant? loginRestaurant()
+{
+    string user;
+    string pw;
+    Restaurant? r = null;
+    bool UserMatch = false;
+    Console.Write("Username: ");
+    user = Console.ReadLine();
+    foreach (Restaurant restaurant in restaurants) { if (user == restaurant.Name) { UserMatch = true; r = restaurant; } }
+    if (UserMatch == false) { Console.WriteLine("User not found"); return null; }
+    Console.Write("Password: ");
+    pw = Console.ReadLine();
+    if (pw == r.Password)
+    { Console.WriteLine("Logged in"); return r; }
+    else { Console.WriteLine("Wrong Password"); return null; }
+}
+
+int dd;
+int mm;
+int y;
+DateTime currentDate = DateTime.Now;
+
+while (true)
+{
+
+    while (true)
+    {   Console.Write("Enter current Date(day): ");
+        try
+        {
+            dd = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    while (true)
+    {   Console.Write("Enter current month(mm): ");
+        try
+        {
+            mm = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    while (true)
+    {   Console.Write("Enter current year(yyyy): ");
+        try
+        {
+            y = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+    try { currentDate = new DateTime(y, mm, dd); break; }
+    catch (Exception ex) { Console.WriteLine("Invalid date entered\n"); }
+}
+
+//above works
+
+//use foreach to to print any objects that are appropriate state wheter just finished/archived or both but not deleted
+
+while (true)
+{
+    int select = menu("1) Login\n2) Register\n0) Exit", 2);
+    if (select == 1)
+    {
+        while (true)
+            {
+                int logCat = menu("1) Customer\n2) Restaurant\n0) Cancel", 2);
+                if (logCat == 1) 
+                {
+                Customer c = loginCustomer();
+                    if(c != null) 
+                    {
+                        while (true)
+                        {
+                            string res;
+                            int customOp = menu("1) Subscribe\n2) Unsubscribe\n0) Logout", 2);
+                        if (customOp == 1)
+                        {
+                            bool sub = false;
+                            Console.Write("Enter Restaurant: ");
+                            res = Console.ReadLine();
+                            bool resFound = false;
+                            foreach (Restaurant restaurant in restaurants)
+                            {
+                                if (res == restaurant.Name)
+                                {
+                                    Restaurant r = restaurant;
+                                    r.SubCustomer(c);
+                                    resFound = true;
+                                    break;
+                                }
+                            }
+                            if (resFound == false) { Console.WriteLine("Restaurant not found"); }
+                        }
+                        else if (customOp == 2)
+                        {
+                            Console.Write("Enter Restaurant: ");
+                            res = Console.ReadLine();
+                            bool resFound = false;
+                            foreach (Restaurant restaurant in restaurants)
+                            {
+                                if (res == restaurant.Name)
+                                {
+                                    Restaurant r = restaurant;
+                                    r.UnsubCustomer(c);
+                                    resFound = true;
+                                    break;
+                                }
+                            }
+                            if (resFound == false) { Console.WriteLine("Restaurant not found"); }
+                        }
+                        else { break; }
+                    }
+                            //Customer ops, the subscribe unsub
+                    };
+                    
+                }
+                else if (logCat == 2)
+                {
+                Restaurant r = loginRestaurant();
+                if (r != null) 
+                    {
+                        while (true)
+                        {
+                        int resOp = menu("1) Add Offers\n0) Logout", 2);
+                            if (resOp == 1)
+                        {
+                            Console.Write("Offer: ");
+                            string offer = Console.ReadLine();
+                            r.AddNewOffer(offer);
+                        }
+                        else { break;}
+                        }
+                        //Restauarant ops, the post notifs
+                    };
+                }
+                else { break; }
+            }
+
+    }
+    else if (select == 2)
+        {
+            while (true)
+            {
+               int regCat = menu("1) Customer\n2) Restaurant\n0) Cancel", 2);
+               if(regCat == 1)
+                {
+                    registerCustomer();
+                }
+               else if(regCat == 2)
+                {
+                    registerRestaurant();
+                }
+               else { break;}
+            }
+        }
+        else { break; }
+}
+
+
+/* this was for testing the template stuff, feel free to remove if you don't want it - just note the one i flagged ***IMPORTANT PART***
+
+int dd;
+int mm;
+int y;
+DateTime currentDate;
+
+while (true)
+{
+
+    while (true)
+    {
+        Console.Write("Enter current Date(day): ");
+        try
+        {
+            dd = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    while (true)
+    {
+        Console.Write("Enter current month(mm): ");
+        try
+        {
+            mm = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    while (true)
+    {
+        Console.Write("Enter current year(yyyy): ");
+        try
+        {
+            y = Convert.ToInt32(Console.ReadLine());
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please input a number\n");
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+    try { currentDate = new DateTime(y, mm, dd); break; }
+    catch (Exception ex) { Console.WriteLine("Invalid date entered\n"); }
+}
+Console.WriteLine(currentDate.ToString());
+
+***IMPORTANT PART***
+you can just create an empty list of orders, just make sure you have an empty list of orders to give to the new CustomArchiveDelete object
+then just hit process archive(input date) for auto processing
+
+var orders = new List<Order>
+{
+    new Order(DateTime.Now.AddYears(-2)) { Status = Order.State.Ready },
+    new Order(DateTime.Now.AddMonths(-3)) { Status = Order.State.Ready },
+    new Order(DateTime.Now) { Status = Order.State.Ready }
+};
+
+var archiveOrders = new List<Order>();
+foreach (var order in orders) { order.Collect(); archiveOrders.Add(order); }
+
+Archive archive = new CustomArchiveDelete(archiveOrders);
+archive.ProcessArchive(currentDate);  // Template method calls both steps
+*/
