@@ -554,68 +554,25 @@ Order payment()
             return currentOrder;
         }
 
-        Payment paymentMethod = null;
-
         switch(input)
         {
             case "1":
-                paymentMethod = new Cash();
-                break;
+                currentOrder.SetPaymentMethod(new Cash());
+                currentOrder.processPayment();
+                return currentOrder;
             case "2":
-                paymentMethod = new CreditCard();
-                break;
+                currentOrder.SetPaymentMethod(new CreditCard());
+                currentOrder.processPayment();
+                return currentOrder;
             case "3":
-                paymentMethod = new PayPal();
-                break;
+                currentOrder.SetPaymentMethod(new PayPal());
+                currentOrder.processPayment();
+                return currentOrder;
             default:
                 invalidInput();
-                Console.ReadLine();
-                payment();
                 break;
         }
-
-        currentOrder.SetPaymentMethod(paymentMethod);
-        currentOrder.processPayment();
-        return currentOrder;
     }
-
-
-
-    //while (true)
-    //{
-    //    Console.WriteLine("Scan the PayNow! QR code below to pay for the food:");
-    //    Console.WriteLine("\n┌─────────────────────────┐");
-    //    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    //    Console.WriteLine("│ ██  ██    ██    ██  ██ │");
-    //    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    //    Console.WriteLine("│         ██  ██         │");
-    //    Console.WriteLine("│ ██  ██    ██  ██    ██ │");
-    //    Console.WriteLine("│   ██  ██████  ██  ██   │");
-    //    Console.WriteLine("│ ██    ██  ██    ██  ██ │");
-    //    Console.WriteLine("│   ██████    ██████  ██ │");
-    //    Console.WriteLine("│ ██    ██  ██  ██    ██ │");
-    //    Console.WriteLine("│         ██  ██         │");
-    //    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    //    Console.WriteLine("│ ██  ██    ██    ██  ██ │");
-    //    Console.WriteLine("│ ██████  ██  ██  ██████ │");
-    //    Console.WriteLine("└─────────────────────────┘");
-    //    Console.ReadLine();
-    //    Console.WriteLine("Please hold...");
-    //    Console.ReadLine();
-
-    //    if (!paymentSuccess())
-    //    {
-    //        Console.WriteLine("Payment failure. Please try again.");
-    //        continue;
-    //    }
-    //    Console.WriteLine("Payment success.");
-    //    Console.WriteLine($"${currentOrder.calculateCost()} has been taken from your account");
-    //    Console.ReadLine();
-
-    //    currentOrder.processPayment();
-    //    break;
-    //}
-    //return currentOrder;
 }
 
 bool paymentSuccess()
