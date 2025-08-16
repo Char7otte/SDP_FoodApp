@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDP_Assg
+namespace SDP_Assignment.PaymentClasses
 {
-    public interface OrderCommand
+    public interface Payment
     {
-        void Execute();
-        void Undo();
+        void Pay(double amount);
     }
 }

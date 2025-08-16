@@ -1,5 +1,6 @@
 using SDP_Assignment.MenuClasses;
 using SDP_Assignment.OrderClasses.OrderStates;
+using SDP_Assignment.PaymentClasses;
 using System;
 using System.Collections.Generic;
 
@@ -18,6 +19,8 @@ public class Order
 
     private OrderState state;
     private List<MenuItem> menuItems;
+    private Payment paymentMethod;
+
 
     public DateTime OrderCreationDate {  get; set; }
 
@@ -37,6 +40,17 @@ public class Order
         OrderCreationDate = new(); //This will be set when the order is delivered
         state = IdleState;
         menuItems = new();
+    }
+
+    public void SetPaymentMethod(Payment payment)
+    {
+        paymentMethod = payment;
+    }
+
+    public void pay()
+    {
+        var cost = calculateCost();
+        paymentMethod.Pay(cost);
     }
 
     public string getState()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDP_Assg
+namespace SDP_Assignment.PaymentClasses
 {
     public class PayPal : Payment
     {

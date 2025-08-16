@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 
 class AwaitingPaymentState : OrderState 
 {
@@ -21,6 +22,11 @@ class AwaitingPaymentState : OrderState
 
     public void processPayment()
     {
+        order.pay();
+
+
+
+
         order.setState(order.RestaurantNotifiedState);
     }
 
