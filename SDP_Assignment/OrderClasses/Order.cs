@@ -88,6 +88,28 @@ public class Order
         return cost;
     }
 
+    public bool checkForCancel()
+    {
+        Console.WriteLine();
+        Console.WriteLine($"The order state is: {this.getState()}");
+        Console.WriteLine("Enter 0 if you would like to cancel your order.");
+        var input = Console.ReadLine();
+        if (input == "0")
+        {
+            this.cancelOrder();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void cannotCancel()
+    {
+        Console.WriteLine();
+        Console.WriteLine($"The order state is: {this.getState()}");
+        Console.WriteLine("The order can no longer be cancelled.");
+    }
+
 
     public void createOrder()
     {

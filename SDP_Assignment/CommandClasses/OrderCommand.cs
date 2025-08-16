@@ -10,5 +10,6 @@ namespace SDP_Assignment.CommandClasses
     {
         void Execute();
         void Undo();
+        void cancel();
     }
 }

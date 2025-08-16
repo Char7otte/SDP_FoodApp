@@ -3,15 +3,22 @@ using SDP_Assignment.AccountClasses;
 using SDP_Assignment.MenuClasses;
 using SDP_Assignment.OrderClasses;
 using SDP_Assignment.PaymentClasses;
+using SDP_Assignment.CommandClasses;
 
 // Initialize data
 Accounts accountsList = DataInitializer.InitializeAccounts();
 Console.WriteLine();
 Waitress waitress = DataInitializer.InitializeWaitress();
 
-
 Account? loggedInAccount = new();
 Order currentOrder = new();
+
+OrderCommand placeOrder = new PlaceOrder(currentOrder);
+OrderCommand payForOrder = new PayForOrder(currentOrder);
+OrderCommand alertRestaurant = new AlertRestaurant(currentOrder);
+OrderCommand preparingFood = new PreparingFood(currentOrder);
+OrderCommand preparingDone = new PreparingDone(currentOrder);
+OrderCommand startDelivery = new StartDelivery(currentOrder);
 
 startScreen();
 
@@ -48,7 +55,7 @@ void afterLoggedIn()
     while (true)
     {
         Console.WriteLine();
-        Console.WriteLine($"Welcome,{loggedInAccount?.Username}.");        
+        Console.WriteLine($"Welcome,{loggedInAccount?.Username}.");
         Console.WriteLine("1. Browse restaurants");
         Console.WriteLine("0. Logout");
         var input = Console.ReadLine();
@@ -72,12 +79,12 @@ void browseRestaurants()
 {
     Console.WriteLine();
     Console.WriteLine("=== RESTAURANT SELECTION ===");
-    
+
     MenuComponent allRestaurants = waitress.AllMenus;
     List<MenuComponent> restaurants = new List<MenuComponent>();
-    
+
     var index = 0;
-    while (true) 
+    while (true)
     {
         try
         {
@@ -92,25 +99,25 @@ void browseRestaurants()
             break;
         }
     }
-    
+
     if (restaurants.Count == 0)
     {
         Console.WriteLine("No restaurants available.");
         return;
     }
-    
+
     Console.WriteLine("0. Back to main menu");
     Console.Write("Select a restaurant: ");
-    
+
     var input = Console.ReadLine();
-    
+
     if (input == "0")
     {
         return;
     }
-    
+
     if (int.TryParse(input, out int restaurantChoice) && restaurantChoice >= 1 && restaurantChoice <= restaurants.Count)
-    { 
+    {
         MenuComponent selectedRestaurant = restaurants[restaurantChoice - 1];
         browseMenuCategories(selectedRestaurant);
     }
@@ -125,10 +132,10 @@ void browseMenuCategories(MenuComponent restaurant)
 {
     Console.WriteLine();
     Console.WriteLine($"=== {restaurant.Name.ToUpper()} - MENU CATEGORIES ===");
-    
+
     List<MenuComponent> categories = new List<MenuComponent>();
     int categoryIndex = 0;
-    
+
     while (true)
     {
         try
@@ -143,7 +150,7 @@ void browseMenuCategories(MenuComponent restaurant)
             break;
         }
     }
-    
+
     if (categories.Count == 0)
     {
         Console.WriteLine("No menu categories available.");
@@ -152,18 +159,18 @@ void browseMenuCategories(MenuComponent restaurant)
         browseRestaurants();
         return;
     }
-    
+
     Console.WriteLine("0. Back to restaurant selection");
     Console.Write("Select a menu category: ");
-    
+
     var input = Console.ReadLine();
-    
+
     if (input == "0")
     {
         browseRestaurants();
         return;
     }
-    
+
     if (int.TryParse(input, out int categoryChoice) && categoryChoice >= 1 && categoryChoice <= categories.Count)
     {
         MenuComponent selectedCategory = categories[categoryChoice - 1];
@@ -252,7 +259,7 @@ void browseMenuItems(MenuComponent restaurant, MenuComponent category)
         invalidInput();
         browseMenuItems(restaurant, category);
     }
-    
+
 }
 
 void collectMenuItems(MenuComponent menu, List<MenuComponent> items)
@@ -263,7 +270,7 @@ void collectMenuItems(MenuComponent menu, List<MenuComponent> items)
         try
         {
             MenuComponent child = menu.getChild(index);
-            
+
             // Check if this is a MenuItem or another menu
             try
             {
@@ -275,7 +282,7 @@ void collectMenuItems(MenuComponent menu, List<MenuComponent> items)
                 // This is a submenu, recursively collect its items
                 collectMenuItems(child, items);
             }
-            
+
             index++;
         }
         catch (ArgumentOutOfRangeException)
@@ -285,14 +292,6 @@ void collectMenuItems(MenuComponent menu, List<MenuComponent> items)
     }
 }
 
-//void startOrderWithItem(MenuComponent selectedItem)
-//{
-//    currentOrder = new Order();
-//    MenuItem itemToAdd = new MenuItem(selectedItem.Name, selectedItem.Description, selectedItem.Vegetarian, selectedItem.Price);
-//    currentOrder.addFood(itemToAdd);
-//    currentOrder.createOrder();
-//}
-
 void proceedToOrder()
 {
     if (!ifWantToOrder())
@@ -300,71 +299,37 @@ void proceedToOrder()
         currentOrder = new Order(); // Reset the order
         return;
     }
-     
 
     currentOrder.createOrder();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    var input = Console.ReadLine();
-    if (input == "0")
-    { 
-        currentOrder.cancelOrder();
-        return;
-    }
+    if (currentOrder.checkForCancel()) return;
 
-    currentOrder = confirmOrder();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
+    OrderController controller = new();
 
-    currentOrder = payment();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
+    controller.SetCommand(placeOrder);
+    controller.SubmitOrder();
+    if (currentOrder.checkForCancel()) return;
 
-    currentOrder = notifyRestaurant();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    if (currentOrder.getState() == "CancelledState") //Check if the restaurant rejected the order
-    {
-        return;
-    }
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
-    else 
+    controller.SetCommand(payForOrder);
+    controller.SubmitOrder();
+    if (currentOrder.getState() == "cancelledState") return; //check if restaurant rejected
+    if (currentOrder.checkForCancel()) return;
 
-        currentOrder = startPreparing();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
+    controller.SetCommand(alertRestaurant);
+    controller.SubmitOrder();
+    if (currentOrder.getState() == "cancelledState") return; //check if restaurant rejected
+    if (currentOrder.checkForCancel()) return;
 
-    currentOrder = finishPreparing();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
+    controller.SetCommand(preparingFood);
+    controller.SubmitOrder();
+    currentOrder.cannotCancel();
 
-    currentOrder = startDelivery();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
+    controller.SetCommand(preparingDone);
+    controller.SubmitOrder();
+    currentOrder.cannotCancel();
+
+    controller.SetCommand(startDelivery);
+    controller.SubmitOrder();
+    currentOrder.cannotCancel();
 
     currentOrder = finishDelivery();
     Console.WriteLine();
@@ -374,255 +339,21 @@ void proceedToOrder()
 
 }
 
-bool ifWantToOrder() 
+bool ifWantToOrder()
 {
     Console.WriteLine("Would you like to proceed with your order? (Y/N)");
     var input = Console.ReadLine()?.ToUpper();
 
-    switch (input) 
+    switch (input)
     {
         case "Y":
             return true;
         case "N":
             return false;
-        default :
+        default:
             invalidInput();
             return false;
     }
-}
-
-void startOrder()
-{
-    waitress.printMenu();
-    if (ifWantToOrder()) 
-    {
-        currentOrder = createOrder();
-    }
-    else 
-    {
-        return;
-    }
-
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    var input = Console.ReadLine();
-    if (input == "0")
-    { 
-        currentOrder.cancelOrder();
-        return;
-    }
-
-
-    currentOrder = confirmOrder();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
-
-    currentOrder = payment();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    if (currentOrder.getState() == "CancelledState") //Check if the restaurant rejected the order
-    {
-        return;
-    }
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
-
-    currentOrder = notifyRestaurant();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    if (currentOrder.getState() == "CancelledState") //Check if the restaurant rejected the order
-    {
-        return;
-    }
-    Console.WriteLine("Enter 0 if you would like to cancel your order.");
-    input = Console.ReadLine();
-    if (input == "0")
-    {
-        currentOrder.cancelOrder();
-        return;
-    }
-    else 
-
-        currentOrder = startPreparing();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
-
-    currentOrder = finishPreparing();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
-
-    currentOrder = startDelivery();
-    Console.WriteLine();
-    Console.WriteLine($"The order state is: {currentOrder.getState()}");
-    Console.WriteLine("The order can no longer be cancelled.");
-
-    currentOrder = finishDelivery();
-    Console.WriteLine();
-    Console.ReadLine();
-
-    afterLoggedIn();
-}
-
-Order createOrder()
-{
-    Order order = new();
-
-    while (true)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Please enter what you would like to order, one at a time.");
-        Console.WriteLine("Enter 0 to finish selecting your order.");
-        Console.WriteLine($"You have ordered:");
-        order.getFood();
-
-        var input = Console.ReadLine();
-        if (string.IsNullOrEmpty(input))
-        {
-            Console.WriteLine("Please enter a valid food.");
-            continue;
-        }
-        else if (input == "0")
-        {
-            break;
-        }
-
-        MenuItem itemToAdd = new MenuItem("Blueberry Pancakes", "Pancakes made with fresh blueberries and maple syrup", true, 3.99);
-        order.addFood(itemToAdd);
-    }
-
-    order.createOrder();
-    return order;
-}
-
-Order confirmOrder()
-{
-    Console.WriteLine("YOUR ORDER: ");
-    currentOrder.getFood();
-    Console.Write("TOTAL PRICE: $");
-    Console.WriteLine(currentOrder.calculateCost());
-    Console.WriteLine("Are you sure this is your order?(Y/N)");
-    
-    var input = Console.ReadLine()?.ToUpper();
-
-    if (input == "Y")
-    {
-        currentOrder.confirmOrder();
-    }
-    else if (input == "N")
-    {
-        Console.WriteLine("Cancelling order");
-        currentOrder.cancelOrder();
-    }
-    else
-    {
-        Console.WriteLine("Invalid input. Order not confirmed.");
-        confirmOrder();
-    }
-
-    return currentOrder;
-}
-
-Order payment()
-{
-    while (true)
-    {
-        Console.WriteLine("Select payment method: ");
-        Console.WriteLine("1. Cash");
-        Console.WriteLine("2. Credit Card");
-        Console.WriteLine("3. PayPal");
-        Console.WriteLine("0. Exit");
-        var input = Console.ReadLine();
-
-        if (input == "0")
-        {
-            currentOrder.cancelOrder();
-            return currentOrder;
-        }
-
-        switch(input)
-        {
-            case "1":
-                currentOrder.SetPaymentMethod(new Cash());
-                currentOrder.processPayment();
-                return currentOrder;
-            case "2":
-                currentOrder.SetPaymentMethod(new CreditCard());
-                currentOrder.processPayment();
-                return currentOrder;
-            case "3":
-                currentOrder.SetPaymentMethod(new PayPal());
-                currentOrder.processPayment();
-                return currentOrder;
-            default:
-                invalidInput();
-                break;
-        }
-    }
-}
-
-bool paymentSuccess()
-{
-    //Simulate payment. Has 10% chance to fail
-    var rand = new Random();
-    int randomNumber = rand.Next(1, 11);
-    if (randomNumber == 1) return false;
-    return true;
-}
-
-Order notifyRestaurant()
-{
-    Console.WriteLine("Notifying restaurant. Please hold...");
-    Console.ReadLine();
-    if (!paymentSuccess()) //Hijacking the RNG function to simulate the restaurant denying the order
-    {
-        Console.WriteLine("Restaurant is unable to fulfill this order. We are sorry for the inconvenience.");
-        currentOrder.rejectOrder();
-        return currentOrder;
-    }
-
-currentOrder.acceptOrder();
-    return currentOrder;
-}
-
-Order startPreparing()
-{
-    Console.WriteLine("Restaurant is now preparing your food...");
-    Console.ReadLine();
-    currentOrder.startPreparation();
-    return currentOrder;
-}
-
-Order finishPreparing()
-{
-    Console.WriteLine("...");
-    Console.ReadLine();
-
-    currentOrder.foodComplete();
-    return currentOrder;
-}
-
-Order startDelivery()
-{
-    Console.WriteLine("Delivery has started.");
-    Console.ReadLine();
-
-    currentOrder.deliver();
-    return currentOrder;
 }
 
 Order finishDelivery()
@@ -630,9 +361,8 @@ Order finishDelivery()
     currentOrder.delivered();
     return new();
 }
- 
+
 #pragma warning disable CS8321 // Local function is declared but never used
-//this is the dumbest warning to exist
 void notImplemented()
 {
     Console.WriteLine("NOT IMPLEMENTED");
@@ -647,4 +377,3 @@ void invalidInput()
 {
     Console.WriteLine("Please enter a valid option.");
 }
-

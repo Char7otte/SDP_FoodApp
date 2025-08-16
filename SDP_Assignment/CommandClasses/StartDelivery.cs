@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace SDP_Assignment.CommandClasses
 {
-    public class CancelOrder : OrderCommand
+    public class StartDelivery : OrderCommand
     {
         private Order order;
 
-        public CancelOrder(Order order)
+        public StartDelivery(Order order)
         {
             this.order = order;
         }
 
         public void Execute()
         {
-            order.cancelOrder();
+            Console.WriteLine("Delivery has started.");
+        Console.ReadLine();
+
+        order.deliver();
         }
 
         public void Undo()

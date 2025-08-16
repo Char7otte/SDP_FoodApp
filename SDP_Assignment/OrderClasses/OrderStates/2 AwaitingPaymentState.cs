@@ -23,10 +23,6 @@ class AwaitingPaymentState : OrderState
     public void processPayment()
     {
         order.pay();
-
-
-
-
         order.setState(order.RestaurantNotifiedState);
     }
 
