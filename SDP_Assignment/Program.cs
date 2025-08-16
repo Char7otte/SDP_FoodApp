@@ -6,7 +6,8 @@ using SDP_Assignment.PaymentClasses;
 using SDP_Assignment.CommandClasses;
 
 // Initialize data
-Accounts accountsList = DataInitializer.InitializeAccounts();
+List<Account> accountsList = DataInitializer.InitializeAccounts();
+Accounts accounts = new(accountsList);
 Console.WriteLine();
 Waitress waitress = DataInitializer.InitializeWaitress();
 
@@ -30,8 +31,40 @@ Order order7 = new Order(new DateTime(2024, 7, 12));
 Order order8 = new Order(new DateTime(2024, 8, 3));
 Order order9 = new Order(new DateTime(2024, 9, 18));
 Order order10 = new Order(new DateTime(2024, 10, 27));
-List<Order> orders = [order1, order2, order3, order4, order5, order6, order7, order8, order9, order10];
+List<Order> orders = new List<Order>{ order1, order2, order3, order4, order5, order6, order7, order8, order9, order10 };
 Archive orderArchive = new(orders);
+
+Console.WriteLine();
+List<DinerMenu> restaurants = getAllRestaurants();
+restaurants[0].SubCustomer(accountsList[0] as Customer);
+restaurants[1].SubCustomer(accountsList[1] as Customer);
+restaurants[0].AddNewOffer("Free drinks after 5pm today!");
+
+
+
+List<DinerMenu> getAllRestaurants()
+{
+    MenuComponent allRestaurants = waitress.AllMenus;
+    List<DinerMenu> restaurants = new List<DinerMenu>();
+
+    var index = 0;
+    while (true)
+    {
+        try
+        {
+            //Get child & add to index until out of range error is thrown to find length
+            MenuComponent restaurant = allRestaurants.getChild(index);
+            restaurants.Add(restaurant as DinerMenu);
+            index++;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            break;
+        }
+    }
+
+    return restaurants;
+}
 
 startScreen();
 
@@ -49,10 +82,10 @@ void startScreen()
         switch (input)
         {
             case "1":
-                loggedInAccount = accountsList.register();
+                loggedInAccount = accounts.register();
                 break;
             case "2":
-                loggedInAccount = accountsList.login();
+                loggedInAccount = accounts.login();
                 break;
             case "3":
                 orderArchive.ProcessArchive(DateTime.Now);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SDP_Assignment.IteratorClasses;
+using SDP_Assignment.AccountClasses;
 
 namespace SDP_Assignment.MenuClasses
 {
@@ -13,13 +14,11 @@ namespace SDP_Assignment.MenuClasses
 
         public override string Name { get; }
         private Iterator? iter = null;
-        private List<int> ratings;
 
         public DinerMenu(string name)
         {
             Name = name;
             components = new();
-            ratings = new();
 
             Console.WriteLine($"{name} has been created.");
         }
@@ -66,6 +65,48 @@ namespace SDP_Assignment.MenuClasses
             }
             this.iter = null;
             Console.WriteLine();
+        }
+
+        private List<Customer> subscribers = new List<Customer>();
+
+        public void SubCustomer(Customer c)
+        {
+            if (!subscribers.Contains(c))
+            {
+                subscribers.Add(c);
+                Console.WriteLine($"{c.Username} has been subscribed to {this.Name}");
+            }
+            else
+            {
+                Console.WriteLine($"{c.Username} is already subscribed to {this.Name}.");
+            }
+        }
+        public void UnsubCustomer(Customer c)
+        {
+            if (subscribers.Contains(c))
+            {
+                subscribers.Remove(c);
+                Console.WriteLine($"{c.Username} has been unsubscribed from {this.Name}");
+            }
+            else
+            {
+                Console.WriteLine($"{c.Username} is not subscribed to {this.Name}.");
+            }
+        }
+
+        public void AddNewOffer(string offer)
+        {
+            Console.WriteLine($"{Name} posted: {offer}");
+            NotifySubscribers(offer);
+        }
+
+        private void NotifySubscribers(string offer)
+        {
+            foreach (Customer subscription in subscribers)
+            {
+                subscription.Update(offer);
+            }
+
         }
     }
 }

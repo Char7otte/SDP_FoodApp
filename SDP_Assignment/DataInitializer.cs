@@ -5,16 +5,13 @@ namespace SDP_Assignment
 {
     internal static class DataInitializer
     {
-        public static Accounts InitializeAccounts()
+        public static List<Account> InitializeAccounts()
         {
-            Accounts accountsList = new();
-            Account accountJerry = new("Jerry", "123");
-            Account accountMary = new("Mary", "abc");
-            Account accountJared = new("Jared", "xyz");
-            accountsList.addAccount(accountJerry);
-            accountsList.addAccount(accountMary);
-            accountsList.addAccount(accountJared);
-            return accountsList;
+            Account accountJerry = new Customer("Jerry", "123");
+            Account accountMary = new Customer("Mary", "abc");
+            Account accountJared = new Customer("Jared", "xyz");
+            List<Account> accounts = [accountJerry, accountMary, accountJared];
+            return accounts;
         }
 
         public static MenuComponent InitializeRestaurants()

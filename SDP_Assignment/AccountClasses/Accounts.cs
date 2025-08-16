@@ -8,10 +8,14 @@ namespace SDP_Assignment.AccountClasses
 {
     internal class Accounts
     {
-        private List<Account> accounts;
+        public List<Account> accounts;
 
         public Accounts() {
             accounts = [];
+        }
+
+        public Accounts(List<Account> accounts) {
+            this.accounts = accounts;
         }
 
         public Account register()
@@ -26,7 +30,8 @@ namespace SDP_Assignment.AccountClasses
                 Console.Write("Enter a username: ");
                 username = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(username)) { 
+                if (string.IsNullOrEmpty(username))
+                {
                     continueLoop = true;
                     Console.WriteLine("Username cannot be empty.");
                     continue;
