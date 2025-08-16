@@ -20,6 +20,19 @@ OrderCommand preparingFood = new PreparingFood(currentOrder);
 OrderCommand preparingDone = new PreparingDone(currentOrder);
 OrderCommand startDelivery = new StartDelivery(currentOrder);
 
+Order order1 = new Order(new DateTime(2025, 1, 15));
+Order order2 = new Order(new DateTime(2025, 2, 10));
+Order order3 = new Order(new DateTime(2025, 3, 5));
+Order order4 = new Order(new DateTime(2025, 4, 20));
+Order order5 = new Order(new DateTime(2024, 5, 25));
+Order order6 = new Order(new DateTime(2024, 6, 30));
+Order order7 = new Order(new DateTime(2024, 7, 12));
+Order order8 = new Order(new DateTime(2024, 8, 3));
+Order order9 = new Order(new DateTime(2024, 9, 18));
+Order order10 = new Order(new DateTime(2024, 10, 27));
+List<Order> orders = [order1, order2, order3, order4, order5, order6, order7, order8, order9, order10];
+Archive orderArchive = new(orders);
+
 startScreen();
 
 void startScreen()
@@ -29,7 +42,7 @@ void startScreen()
         Console.WriteLine();
         Console.WriteLine("1. Register new account");
         Console.WriteLine("2. Login");
-        //Console.WriteLine("3. Browse restaurants");
+        Console.WriteLine("3. View order archive");
         var input = Console.ReadLine();
         Console.WriteLine();
 
@@ -40,6 +53,9 @@ void startScreen()
                 break;
             case "2":
                 loggedInAccount = accountsList.login();
+                break;
+            case "3":
+                orderArchive.ProcessArchive(DateTime.Now);
                 break;
             default:
                 invalidInput();
@@ -359,6 +375,7 @@ bool ifWantToOrder()
 Order finishDelivery()
 {
     currentOrder.delivered();
+    orderArchive.addOrder(currentOrder);
     return new();
 }
 

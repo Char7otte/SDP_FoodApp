@@ -21,8 +21,13 @@ public class Order
     private List<MenuItem> menuItems;
     private Payment paymentMethod;
 
+    public DateTime OrderCreationDate { get; set; }
+    public string status;
 
-    public DateTime OrderCreationDate {  get; set; }
+    public Order(DateTime date) //This constructor is just for filling the archive.
+    {
+        OrderCreationDate = date;
+    }
 
     public Order()
     {
