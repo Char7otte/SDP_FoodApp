@@ -106,6 +106,7 @@ void afterLoggedIn()
         Console.WriteLine();
         Console.WriteLine($"Welcome,{loggedInAccount?.Username}.");
         Console.WriteLine("1. Browse restaurants");
+        Console.WriteLine("2. Notifications");
         Console.WriteLine("0. Logout");
         var input = Console.ReadLine();
 
@@ -113,6 +114,8 @@ void afterLoggedIn()
         {
             case "1":
                 browseRestaurants();
+                break;
+            case "2":
                 break;
             case "0":
                 loggedInAccount = new();
