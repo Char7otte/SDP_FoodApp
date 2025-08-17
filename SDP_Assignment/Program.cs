@@ -115,7 +115,7 @@ void afterLoggedIn()
             case "1":
                 browseRestaurants();
                 break;
-            case 2:
+            case "2":
                 Console.WriteLine("Select a restaurant to post a notification:");
                 for (int i = 0; i < restaurants.Count; i++)
                 {
