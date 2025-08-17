@@ -115,7 +115,28 @@ void afterLoggedIn()
             case "1":
                 browseRestaurants();
                 break;
-            case "2":
+            case 2:
+                Console.WriteLine("Select a restaurant to post a notification:");
+                for (int i = 0; i < restaurants.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {restaurants[i].Name}");
+                }
+            
+                Console.Write("Enter restaurant number: ");
+                int restChoice;
+                if (int.TryParse(Console.ReadLine(), out restChoice) && restChoice > 0 && restChoice <= restaurants.Count)
+                {
+                    DinerMenu selectedRestaurant = restaurants[restChoice - 1];
+            
+                    Console.Write("Enter the offer to notify subscribers: ");
+                    string offer = Console.ReadLine();
+            
+                    selectedRestaurant.AddNewOffer(offer); // This triggers NotifySubscribers
+                }
+                else
+                {
+                    Console.WriteLine("Invalid selection.");
+                }
                 break;
             case "0":
                 loggedInAccount = new();
